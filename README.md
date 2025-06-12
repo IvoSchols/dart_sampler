@@ -41,6 +41,17 @@ Import the package:
     final map = {'x': 10, 'y': 20};
     final entry = map.sample();
     print('${entry.key} -> ${entry.value}');
+
+    // Iterable
+    Iterable<int> gen() sync* {
+        yield 10;
+        yield 20;
+        yield 30;
+      }
+
+    final rng = Random(5);
+    final element = gen().sample(random: rng);
+    print(element.sample()); // e.g. 10
     }
 ```
 ## Weighted sampling
@@ -83,6 +94,7 @@ void main() {
 - `String.sample({Distribution? distribution, Random? random})`
 - `List<T>.sample({Distribution? distribution, Random? random})`
 - `Map<K,V>.sample({Distribution? distribution, Random? random})`
+- `Iterable<T>.sample({Distribution? distribution, Random? random})` — sample an element from any Iterable<T>. This will iterate and sample with probability `1/n`.
 
 # Testing
 Run all tests with:
