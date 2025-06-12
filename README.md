@@ -12,7 +12,7 @@ A Dart library for random sampling from finite containers (String, List, Map) wi
 Add this to your pubspec.yaml:
 ```yaml
     dependencies:
-        sampler: ^0.2.0
+        sampler: ^1.0.0
 ```
 Then run:
 `dart pub get`
