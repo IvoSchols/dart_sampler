@@ -4,9 +4,11 @@ A Dart library for random sampling from finite containers (String, List, Map) wi
 ## Features
 - Uniform sampling of characters, list elements, or map entries.
 - Weighted sampling (linear-scan) via WeightedDistribution.
-- Alias/Vose method for O(1) weighted sampling via AliasMethodDistribution.
-- Reservoir sampling utilities for batch or streaming scenarios.
+- Alias/Vose method for O(1) weighted sampling via AliasDistribution.
 - Type-specific extensions: call .sample() directly on String, List<T>, or Map<K,V>.
+
+## Todo
+- Reservoir sampling utilities for batch or streaming scenarios.
 
 # Installation
 Add this to your pubspec.yaml:
