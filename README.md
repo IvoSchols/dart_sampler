@@ -55,7 +55,7 @@ void main() {
   print(selected);
 
   // Alias method (fast)
-  final alias = AliasMethodDistribution(weights);
+  final alias = AliasDistribution(weights);
   print(items.sample(distribution: alias));
 }
 ```
