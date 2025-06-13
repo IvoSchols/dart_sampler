@@ -1,5 +1,5 @@
 import 'dart:math';
-import '../sampler.dart';
+import '../sample.dart';
 
 /// Weighted (linear-scan) distribution.
 class WeightedDistribution implements Distribution {

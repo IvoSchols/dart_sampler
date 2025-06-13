@@ -1,5 +1,5 @@
 import 'dart:math';
-import '../sampler.dart';
+import '../sample.dart';
 
 /// Fast O(1) sampling after O(n) setup via Vose’s alias method.
 class AliasDistribution implements Distribution {

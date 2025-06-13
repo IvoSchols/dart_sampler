@@ -1,4 +1,4 @@
-import '../sampler.dart';
+import '../sample.dart';
 
 class MapSampler<K, V> implements Sampler<Map<K, V>, MapEntry<K, V>> {
   @override

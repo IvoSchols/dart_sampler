@@ -1,5 +1,5 @@
 import 'dart:math';
-import '../sampler.dart';
+import '../sample.dart';
 
 // 0) Iterable<T> → sample an element
 /// Extension on any Iterable<T> to sample an element using reservoir sampling.

@@ -1,4 +1,4 @@
-import 'package:sampler/sampler.dart';
+import 'package:dart_sampler/sample.dart';
 
 void main() {
   // Uniform character sampling:

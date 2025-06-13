@@ -1,4 +1,4 @@
-import '../sampler.dart';
+import '../sample.dart';
 
 class ListSampler<T> implements Sampler<List<T>, T> {
   @override

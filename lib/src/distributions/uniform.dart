@@ -1,6 +1,6 @@
 /// Uniform distribution for sampling indices uniformly from a finite container.
 import 'dart:math';
-import '../sampler.dart';
+import '../sample.dart';
 
 class UniformDistribution implements Distribution {
   @override

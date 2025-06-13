@@ -2,7 +2,7 @@
 import 'package:test/test.dart';
 import 'dart:math';
 
-import 'package:sampler/sampler.dart';
+import 'package:dart_sampler/sample.dart';
 
 void main() {
   group('UniformDistribution', () {

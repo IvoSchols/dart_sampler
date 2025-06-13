@@ -1,4 +1,4 @@
-import '../sampler.dart';
+import '../sample.dart';
 
 class StringSampler implements Sampler<String, String> {
   @override
