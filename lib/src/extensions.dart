@@ -1,60 +1,123 @@
 import 'dart:math';
-import '../sample.dart';
+import '../dart_sampler.dart';
 
-// 0) Iterable<T> → sample an element
-/// Extension on any Iterable<T> to sample an element using reservoir sampling.
+// ====== Iterable Extension (Reservoir Sampling) ======
+
+/// Extension to sample a single element via reservoir sampling.
 extension IterableSampling<T> on Iterable<T> {
-  /// Sample one element in O(n) time and O(1) space.
-  T sample({Distribution? distribution, Random? random}) {
+  /// Samples one element in O(n) time using reservoir sampling.
+  ///
+  /// Throws [StateError] if the iterable is empty.
+  T sample({Random? random}) {
     final rng = random ?? Random();
     T? result;
-    int count = 0;
-    for (var element in this) {
+    var count = 0;
+    for (final element in this) {
       count++;
-      // With probability 1/count, select the current element
       if (rng.nextDouble() < 1 / count) {
         result = element;
       }
     }
     if (result == null) {
-      throw StateError('Cannot sample from empty iterable');
+      throw StateError('Cannot sample from an empty iterable');
     }
     return result;
   }
-}
 
-// 1) String → sample a character
-extension StringSampling on String {
-  String sample({Distribution? distribution, Random? random}) {
-    return sampleWith<String, String>(
-      this,
-      StringSampler(),
-      distribution: distribution,
-      random: random,
-    );
+  List<T> sampleMany(int n, {Random? random}) {
+    if (n <= 0) {
+      throw ArgumentError('Sample size must be positive');
+    }
+    final rng = random ?? Random();
+    final reservoir = <T>[];
+    var count = 0;
+
+    for (final element in this) {
+      count++;
+      if (reservoir.length < n) {
+        reservoir.add(element);
+      } else {
+        final index = rng.nextInt(count);
+        if (index < n) {
+          reservoir[index] = element;
+        }
+      }
+    }
+
+    if (reservoir.isEmpty) {
+      throw StateError('Cannot sample from an empty iterable');
+    }
+    return reservoir;
   }
 }
 
-// 2) List<T> → sample an element
+// ====== Convenience Extensions ======
+
 extension ListSampling<T> on List<T> {
-  T sample({Distribution? distribution, Random? random}) {
-    return sampleWith<List<T>, T>(
-      this,
-      ListSampler<T>(),
-      distribution: distribution,
-      random: random,
-    );
-  }
+  /// Samples an element using [sampleWith].
+  T sample({Distribution? distribution, Random? random}) =>
+      sampleWith<List<T>, T>(
+        this,
+        ListSampler<T>(),
+        distribution: distribution,
+        random: random,
+      );
+
+  /// Samples multiple elements using [sampleManyWith].
+  List<T> sampleMany(int n, {Distribution? distribution, Random? random}) =>
+      sampleManyWith<List<T>, T>(
+        this,
+        ListSampler<T>(),
+        n,
+        distribution: distribution,
+        random: random,
+      );
 }
 
-// 3) Map<K,V> → sample a MapEntry
 extension MapSampling<K, V> on Map<K, V> {
-  MapEntry<K, V> sample({Distribution? distribution, Random? random}) {
-    return sampleWith<Map<K, V>, MapEntry<K, V>>(
-      this,
-      MapSampler<K, V>(),
-      distribution: distribution,
-      random: random,
-    );
-  }
+  /// Samples a MapEntry &lt;K, V&gt; using [sampleWith].
+  MapEntry<K, V> sample({Distribution? distribution, Random? random}) =>
+      sampleWith<Map<K, V>, MapEntry<K, V>>(
+        this,
+        MapSampler<K, V>(),
+        distribution: distribution,
+        random: random,
+      );
+
+  /// Samples multiple MapEntry &lt;K, V&gt; using [sampleManyWith].
+  List<MapEntry<K, V>> sampleMany(
+    int n, {
+    Distribution? distribution,
+    Random? random,
+  }) => sampleManyWith<Map<K, V>, MapEntry<K, V>>(
+    this,
+    MapSampler<K, V>(),
+    n,
+    distribution: distribution,
+    random: random,
+  );
+}
+
+extension StringSampling on String {
+  /// Samples a single character as a String using [sampleWith].
+  String sample({Distribution? distribution, Random? random}) =>
+      sampleWith<String, String>(
+        this,
+        StringSampler(),
+        distribution: distribution,
+        random: random,
+      );
+
+  /// Samples multiple characters as Strings using [sampleManyWith].
+  List<String> sampleMany(
+    int n, {
+    Distribution? distribution,
+    Random? random,
+  }) => sampleManyWith<String, String>(
+    this,
+    StringSampler(),
+    n,
+    distribution: distribution,
+    random: random,
+  );
 }

@@ -1,42 +1,84 @@
 import 'dart:math';
 import '../sample.dart';
 
-/// Fast O(1) sampling after O(n) setup via Vose’s alias method.
+/// A discrete distribution sampler using Vose's Alias Method.
+///
+/// Preprocesses weights in O(n) time and provides O(1) sampling.
 class AliasDistribution implements Distribution {
-  final List<double> _prob;
-  final List<int> _alias;
+  /// Probabilities for each index.
+  final List<double> _probabilities;
 
+  /// Alias table mapping.
+  final List<int> _aliasTable;
+
+  /// Constructs an [AliasDistribution] from a list of non-negative [weights].
+  ///
+  /// Throws [ArgumentError] if [weights] is empty or contains non-positive values.
   AliasDistribution(List<double> weights)
-    : _prob = List.filled(weights.length, 0),
-      _alias = List.filled(weights.length, 0) {
-    final n = weights.length;
-    final total = weights.reduce((a, b) => a + b);
-    final scaled = weights.map((w) => w * n / total).toList();
-    final small = <int>[], large = <int>[];
-
-    for (var i = 0; i < n; i++) {
-      (scaled[i] < 1 ? small : large).add(i);
-    }
-
-    while (small.isNotEmpty && large.isNotEmpty) {
-      final l = small.removeLast(), g = large.removeLast();
-      _prob[l] = scaled[l];
-      _alias[l] = g;
-      scaled[g] = (scaled[g] + scaled[l]) - 1;
-      if (scaled[g] < 1) {
-        small.add(g);
-      } else {
-        large.add(g);
-      }
-    }
-    for (var leftover in [...large, ...small]) {
-      _prob[leftover] = 1;
-    }
+    : assert(weights.isNotEmpty, 'Weights list must not be empty.'),
+      _probabilities = List.filled(weights.length, 0),
+      _aliasTable = List.filled(weights.length, 0) {
+    _validateWeights(weights);
+    _buildAliasTables(weights);
   }
 
   @override
   int nextIndex(int size, Random rng) {
-    final i = rng.nextInt(_prob.length);
-    return rng.nextDouble() < _prob[i] ? i : _alias[i];
+    // Sample uniformly from indices
+    final index = rng.nextInt(_probabilities.length);
+    // Accept or alias
+    return rng.nextDouble() < _probabilities[index]
+        ? index
+        : _aliasTable[index];
+  }
+
+  /// Validates that all [weights] are positive.
+  void _validateWeights(List<double> weights) {
+    if (weights.any((w) => w <= 0)) {
+      throw ArgumentError.value(
+        weights,
+        'weights',
+        'All weights must be positive non-zero values.',
+      );
+    }
+  }
+
+  /// Builds the probability and alias tables.
+  void _buildAliasTables(List<double> weights) {
+    final int n = weights.length;
+    final totalWeight = weights.reduce((sum, w) => sum + w);
+    final scaled = List<double>.from(weights.map((w) => w * n / totalWeight));
+
+    final small = <int>[];
+    final large = <int>[];
+
+    for (var i = 0; i < n; i++) {
+      if (scaled[i] < 1.0) {
+        small.add(i);
+      } else {
+        large.add(i);
+      }
+    }
+
+    while (small.isNotEmpty && large.isNotEmpty) {
+      final smaller = small.removeLast();
+      final larger = large.removeLast();
+
+      _probabilities[smaller] = scaled[smaller];
+      _aliasTable[smaller] = larger;
+
+      scaled[larger] = scaled[larger] - (1.0 - scaled[smaller]);
+      if (scaled[larger] < 1.0) {
+        small.add(larger);
+      } else {
+        large.add(larger);
+      }
+    }
+
+    // Remaining probabilities are 1.0
+    for (final index in [...large, ...small]) {
+      _probabilities[index] = 1.0;
+      _aliasTable[index] = index;
+    }
   }
 }
