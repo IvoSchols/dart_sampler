@@ -1,6 +1,6 @@
 name: dart_sampler
 description: A Dart library for random sampling from strings, lists, maps, and iterators using pluggable distributions. 
-version: 1.0.2
+version: 1.0.3
 repository: https://github.com/IvoSchols/dart_sampler
 
 environment:
