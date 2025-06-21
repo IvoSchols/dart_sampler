@@ -1,5 +1,4 @@
-import 'dart:math';
-import '../sample.dart';
+part of 'distributions.dart';
 
 /// A sampler that uniformly selects an index from [0] to [size - 1].
 ///

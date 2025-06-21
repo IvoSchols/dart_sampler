@@ -1,31 +1,61 @@
-// test/sampler_test.dart
-import 'package:test/test.dart';
 import 'dart:math';
 
+import 'package:test/test.dart';
 import 'package:dart_sampler/dart_sampler.dart';
 
 void main() {
-  group('WeightedDistribution', () {
-    test('nextIndex respects weights', () {
-      final weights = [1.0, 0.0, 0.0];
-      final dist = WeightedDistribution(weights);
-      final rng = Random(999);
-      // Always weight=1 for index 0 only
-      expect(dist.nextIndex(3, rng), equals(0));
+  group('WeightedDistribution constructor errors', () {
+    test('throws on empty list', () {
+      expect(() => WeightedDistribution([]), throwsA(isA<AssertionError>()));
     });
 
-    test('sampleWith with weighted distribution', () {
-      final elements = [10, 20, 30];
-      final weights = [0.0, 1.0, 0.0];
-      final dist = WeightedDistribution(weights);
-      final rng = Random(7);
-      final sample = sampleWith<List<int>, int>(
-        elements,
-        ListSampler<int>(),
-        distribution: dist,
-        random: rng,
+    test('throws when sum of weights is zero', () {
+      expect(
+        () => WeightedDistribution([0.0, 0.0, 0.0]),
+        throwsA(isA<ArgumentError>()),
       );
-      expect(sample, equals(20));
+    });
+
+    test('throws when sum of weights is negative', () {
+      expect(
+        () => WeightedDistribution([-1.0, -2.0, 3.0]),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+  });
+
+  group('nextIndex size‐mismatch', () {
+    test('throws if size mismatches weights length', () {
+      final wd = WeightedDistribution([1, 2, 3]);
+      final rng = Random(42);
+      expect(() => wd.nextIndex(4, rng), throwsA(isA<StateError>()));
+    });
+  });
+
+  group('Sampling distribution (statistical)', () {
+    test('frequencies converge to weights proportions', () {
+      // Weights: [1,2,3] → normalized [1/6, 2/6, 3/6]
+      final weights = [1.0, 2.0, 3.0];
+      final wd = WeightedDistribution(weights);
+
+      final rng = Random(123456); // fixed seed → deterministic sequence
+      final counts = List<int>.filled(weights.length, 0);
+      const trials = 60000;
+
+      for (var i = 0; i < trials; i++) {
+        counts[wd.nextIndex(weights.length, rng)]++;
+      }
+
+      final expected = [1 / 6, 2 / 6, 3 / 6];
+      for (var i = 0; i < counts.length; i++) {
+        final freq = counts[i] / trials;
+        // allow ±1% tolerance
+        expect(
+          freq,
+          closeTo(expected[i], 0.01),
+          reason: 'Bucket $i: observed freq $freq, expected ${expected[i]}',
+        );
+      }
     });
   });
 }

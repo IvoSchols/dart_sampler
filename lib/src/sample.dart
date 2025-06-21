@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'distributions/uniform.dart';
+import 'distributions/distributions.dart';
 
 /// Defines how to interpret a container [C] as a finite collection of items of type [A].
 abstract class Sampler<C, A> {
@@ -9,12 +9,6 @@ abstract class Sampler<C, A> {
 
   /// Retrieves the element at [index] within [container].
   A getAt(C container, int index);
-}
-
-/// Strategy for selecting an index from 0 to size-1.
-abstract class Distribution {
-  /// Returns a next index given [size] and a [Random] generator.
-  int nextIndex(int size, Random rng);
 }
 
 /// Generic sampling function for any container [C] and element [A].

@@ -1,5 +1,4 @@
-import 'dart:math';
-import '../sample.dart';
+part of 'distributions.dart';
 
 /// A discrete distribution sampler using Vose's Alias Method.
 ///

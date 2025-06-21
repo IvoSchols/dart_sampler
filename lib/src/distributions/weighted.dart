@@ -1,5 +1,4 @@
-import 'dart:math';
-import '../sample.dart';
+part of 'distributions.dart';
 
 /// A sampler that selects an index with probability proportional to given weights.
 ///
