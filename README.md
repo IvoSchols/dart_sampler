@@ -1,4 +1,4 @@
-# Sampler
+# Dart Sampler 
 A Dart library for random sampling from finite containers (String, List, Map) with pluggable distributions and ergonomic extension methods.
 
 ## Features
@@ -14,7 +14,7 @@ A Dart library for random sampling from finite containers (String, List, Map) wi
 Add this to your pubspec.yaml:
 ```yaml
     dependencies:
-        sampler: ^1.0.1
+        dart_sampler: ^1.0.2
 ```
 Then run:
 `dart pub get`
@@ -24,7 +24,7 @@ Or, if using Flutter:
 
 # Usage
 Import the package:
-`import 'package:sampler/sampler.dart';`
+`import 'package:dart_sampler/dart_sampler.dart';`
 
 ## Uniform sampling
 ```dart
@@ -99,7 +99,7 @@ void main() {
 - `Iterable<T>.sample({Distribution? distribution, Random? random})` — sample an element from any Iterable<T>. This will iterate and sample with probability `1/n`.
 
 - `String.sampleMany(int n, {Distribution? distribution, Random? random})` - sample `n` elements and return a list
-- Also implemented for List, Map, and Iterable.
+  - Also implemented for List, Map, and Iterable.
 
 # Testing
 Run all tests with:
